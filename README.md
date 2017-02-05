@@ -1,7 +1,7 @@
 # libertuscode
 Single header utility libraries with APL2, Boost, BSD, MIT, or compatible licenses. This code is based on work of various open source project constributions by some very generous people. All credits and original licensing are at the top of the files.
 
-### lc_image
+## lc_image
 JPG and PNG loader
 ```c++
   // Loading from file
@@ -28,7 +28,7 @@ The last parameter for both ```lc_load_image``` and ```lc_load_image_mem``` can 
 | 4  | 4, A=0xFF  |
 
 
-### lc_image_resize
+## lc_image_resize
 Image resize with various filters:
 
 | filter name/constant |
