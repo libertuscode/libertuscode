@@ -82,6 +82,7 @@ freely, subject to the following restrictions:
 /*
 
 Things to know:
+ - supported formats: JPG, PNG
  - lc_load_image and lc_load_image_mem are NOT thread safe
 
 */
