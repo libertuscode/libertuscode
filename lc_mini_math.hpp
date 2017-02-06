@@ -39,6 +39,10 @@ Large portions of lc_mini_math is borrowed from GLM:
 
 #pragma once
 
+#if ! defined(__cplusplus)
+    #error "C++ is required!"
+#endif 
+
 #include <cmath>
 
 #define LC_DEPTH_ZERO_TO_ONE            0x00000001
