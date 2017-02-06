@@ -2,7 +2,7 @@
 Single header utility libraries with APL2, Boost, BSD, MIT, or compatible licenses. This code is based on work of various open source project constributions by some very generous people. All credits and original licensing are at the top of the files.
 
 ## lc_image
-JPG and PNG loader
+JPG and PNG loader. JPG baseline only, progressive JPGs will not work.
 ```c++
   // Loading from file
   int w, h, c;
