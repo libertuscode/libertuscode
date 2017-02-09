@@ -91,8 +91,9 @@ namespace cinder {
 	  //!
 	  class Window {
 	  public:
-        Window(App* app, detail::CreateRendererFn createRendererFn);
-        virtual ~Window();
+      Window(App* app);
+      virtual ~Window();
+      App*  getApp() const {return mApp;}
 	  private:
       App*                        mApp = nullptr;
 	    std::unique_ptr<WindowImpl>	mImpl;
@@ -103,14 +104,13 @@ namespace cinder {
     //!
     class AppImpl {
     public:
-      AppImpl(App* app, const detail::AppParams& appParams);
+      AppImpl(App* app);
       virtual ~AppImpl();
     protected:
       virtual void  run() = 0;
       friend class App;
     protected:
       App*						        mApp = nullptr;
-	    detail::AppParams			  mAppParams = {};
 	    std::unique_ptr<Window>	mMainWindow;
     };
     
@@ -121,6 +121,8 @@ namespace cinder {
     public:
       App();
       virtual ~App();
+
+      const detail::AppParams&  getAppParams() const {return mAppParams;}
 
       void          run();
 
@@ -139,7 +141,7 @@ namespace cinder {
     //!
     class AppImplMsw : public AppImpl {
 	  public:
-      AppImplMsw(App* app, const detail::AppParams& appParams);
+      AppImplMsw(App* app);
       virtual ~AppImplMsw();
     protected:
       virtual void  run() override;
@@ -199,7 +201,7 @@ namespace cinder {
       mAppParams = detail::sAppParams;
       detail::sAppParams = {};
 #if defined(CINDER_MSW)
-	    mImpl = std::make_unique<AppImplMsw>(this, mAppParams);
+	    mImpl = std::make_unique<AppImplMsw>(this);
 #endif
 	  }
 
@@ -213,8 +215,8 @@ namespace cinder {
 	  // ------------------------------------------------------------------------------------------------
 	  // AppImpl
 	  // ------------------------------------------------------------------------------------------------
-    AppImpl::AppImpl(App* app, const detail::AppParams& appParams)
-	  	: mApp(app), mAppParams(appParams)
+    AppImpl::AppImpl(App* app)
+	  	: mApp(app)
 	  {
 	  }
 	  
@@ -224,12 +226,13 @@ namespace cinder {
 	  // ------------------------------------------------------------------------------------------------
 	  // Window
 	  // ------------------------------------------------------------------------------------------------
-    Window::Window(App* app, detail::CreateRendererFn createRendererFn)
+    Window::Window(App* app)
       : mApp(app)
     {
 #if defined(CINDER_MSW)
 	    mImpl = std::make_unique<WindowImplMsw>(this);
 #endif
+      auto createRendererFn = app->getAppParams().createRendererFn;
       mImpl->createRenderer(createRendererFn);
       mImpl->setupRenderer();
 	  }
@@ -287,10 +290,10 @@ namespace cinder {
 	  // ------------------------------------------------------------------------------------------------
 	  // AppImplMsw
 	  // ------------------------------------------------------------------------------------------------
-    AppImplMsw::AppImplMsw(App* app, const detail::AppParams& appParams)
-      : AppImpl(app, appParams) 
+    AppImplMsw::AppImplMsw(App* app)
+      : AppImpl(app) 
 	  {
-        mMainWindow = std::make_unique<Window>(app, appParams.createRendererFn);
+        mMainWindow = std::make_unique<Window>(app);
 	  }
 
     AppImplMsw::~AppImplMsw() {
@@ -326,7 +329,7 @@ namespace cinder {
 	    wc.lpfnWndProc    = WndProc;
 	    wc.cbClsExtra     = NULL;
 	    wc.cbWndExtra     = NULL;
-	    wc.hInstance      = mWindow->getApp()->
+	    wc.hInstance      = mWindow->getApp()->getAppParams().hInstance;
 	    wc.hIcon          = LoadIcon(NULL, IDI_APPLICATION);
 	    wc.hCursor        = LoadCursor(NULL, IDC_ARROW);
 	    wc.hbrBackground  = (HBRUSH)(COLOR_WINDOW + 2);
