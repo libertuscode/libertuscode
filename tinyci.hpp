@@ -29,12 +29,16 @@ POSSIBILITY OF SUCH DAMAGE.
     #define WIN32_LEAN_AND_MEAN
   #endif
   #include <Windows.h>
+  #include <comutil.h>
+  #pragma comment(lib, "comsuppw.lib")
 #elif defined(__linux__)
   #define CINDER_LINUX
 #endif
 
+#include <algorithm>
 #include <functional>
 #include <memory>
+#include <vector>
 
 namespace cinder {
   namespace app {
@@ -45,8 +49,10 @@ namespace cinder {
     namespace detail {
       using CreateRendererFn = std::function<cinder::app::Renderer*(cinder::app::Window*)>;
 	    struct AppParams {
+        std::string       name;
 #if defined(CINDER_MSW)
 		    HINSTANCE			    hInstance = nullptr;
+        int               nCmdShow = 0;
 #endif
 		    CreateRendererFn  createRendererFn;
 	    };
@@ -76,8 +82,9 @@ namespace cinder {
 	  public:
       WindowImpl(Window* window);
       virtual ~WindowImpl();
+      virtual void  redraw() = 0;
     protected:
-      virtual   void setupRenderer() = 0;
+      virtual void  setupRenderer() = 0;
 	  protected:
 	    Window*					mWindow;
 	    std::unique_ptr<Renderer>	mRenderer;
@@ -93,10 +100,15 @@ namespace cinder {
 	  public:
       Window(App* app);
       virtual ~Window();
-      App*  getApp() const {return mApp;}
+      App*          getApp() const {return mApp;}
+      virtual void  close();
+      virtual void  redraw();
 	  private:
       App*                        mApp = nullptr;
 	    std::unique_ptr<WindowImpl>	mImpl;
+    public:
+      //! Do not call this method direct, the behavior is undefined.
+      void private_draw();
 	  };
 
     //! \class AppImpl
@@ -108,10 +120,14 @@ namespace cinder {
       virtual ~AppImpl();
     protected:
       virtual void  run() = 0;
+      virtual void  closeWindow(Window* window) = 0;
       friend class App;
     protected:
-      App*						        mApp = nullptr;
-	    std::unique_ptr<Window>	mMainWindow;
+      App*						                      mApp = nullptr;
+      bool                                  mShouldQuit = false;
+	    std::vector<std::unique_ptr<Window>>  mWindows; 
+    private:
+      void private_redraw();
     };
     
     //! \class App
@@ -119,13 +135,18 @@ namespace cinder {
     //!
     class App {
     public:
+      class Settings {
+      };
+
       App();
       virtual ~App();
 
       const detail::AppParams&  getAppParams() const {return mAppParams;}
 
-      void          run();
+      // Do not call this method directly, behavior is undefined.
+      void          private_run(); 
 
+      virtual void  setup() {}
       virtual void	mouseDrag(MouseEvent event) {}
       virtual void	keyDown(KeyEvent event) {}
       virtual void	update() {}
@@ -133,6 +154,21 @@ namespace cinder {
     private:
       detail::AppParams         mAppParams;
       std::unique_ptr<AppImpl>	mImpl;
+      Window*                   mCurrentWindow = nullptr;
+    
+    private:
+      void private_setup();
+      void private_update();
+      void private_draw(Window* window);
+      void private_redraw();
+      void private_close_window(Window* window);
+#if defined(CINDER_MSW)
+      friend class AppImplMsw;
+#endif
+      friend class Window;
+
+    public:
+      static void configureApp(const detail::AppParams& appParams, std::function<void(App::Settings*)> prepareSettingsFn = nullptr);
     };
 
 #if defined(CINDER_MSW)
@@ -145,6 +181,7 @@ namespace cinder {
       virtual ~AppImplMsw();
     protected:
       virtual void  run() override;
+      virtual void  closeWindow(Window* window) override;
 	  private:
     };
 
@@ -155,11 +192,13 @@ namespace cinder {
 	  public:
         WindowImplMsw(Window* window);
         virtual ~WindowImplMsw();
+        virtual void  redraw() override;
       protected:
         virtual void  setupRenderer() override;
 	  private:
-        HWND  mWnd = nullptr;
-        HDC   mDc = nullptr;
+        HWND                  mWnd = nullptr;
+        HDC                   mDc = nullptr;
+        std::vector<wchar_t>  mWindowClassName;
 	  };
 #elif defined(CINDER_LINUX)
 	  //! \class App
@@ -187,16 +226,19 @@ namespace cinder {
 namespace ci = cinder;
 
 #if defined(TINYCI_IMPLEMENTATION)
+#include <unordered_map>
 
 namespace cinder {
   namespace app {
     namespace detail {
-	    static AppParams sAppParams = {};
+	    static AppParams      sAppParams;
+      static App::Settings  sAppSettings;
 	  } // namespace detail
 
 	  // ------------------------------------------------------------------------------------------------
 	  // App
 	  // ------------------------------------------------------------------------------------------------
+
     App::App() {
       mAppParams = detail::sAppParams;
       detail::sAppParams = {};
@@ -208,8 +250,39 @@ namespace cinder {
     App::~App() {
 	  }
 
-    void App::run() {
+    void App::private_setup() {
+      setup();
+    }
+
+    void App::private_update() {
+      update();
+    }
+
+    void App::private_draw(Window* window)
+    {
+      mCurrentWindow = window;
+      draw();
+    }
+
+    void App::private_redraw() {
+      mImpl->private_redraw();
+    }
+
+    void App::private_run() {
       mImpl->run();
+    }
+
+    void App::private_close_window(Window* window)
+    {
+      mImpl->closeWindow(window);
+    }
+
+    void App::configureApp(const detail::AppParams& appParams, std::function<void(App::Settings*)> prepareSettingsFn)
+    {
+      detail::sAppParams = appParams;
+      if (prepareSettingsFn) {
+        prepareSettingsFn(&(detail::sAppSettings));
+      }
     }
 
 	  // ------------------------------------------------------------------------------------------------
@@ -223,7 +296,14 @@ namespace cinder {
 	  AppImpl::~AppImpl() {
 	  }
 
-	  // ------------------------------------------------------------------------------------------------
+    void AppImpl::private_redraw()
+    {
+      for (auto& window : mWindows) {
+        window->redraw();
+      }
+    }
+
+    // ------------------------------------------------------------------------------------------------
 	  // Window
 	  // ------------------------------------------------------------------------------------------------
     Window::Window(App* app)
@@ -239,6 +319,20 @@ namespace cinder {
 
     Window::~Window() {
 	  }
+
+    void Window::close()
+    {
+      mApp->private_close_window(this);
+    }
+
+    void Window::redraw()
+    {
+      mImpl->redraw();
+    }
+
+    void Window::private_draw() {
+      mApp->private_draw(this);
+    }
 
 	  // ------------------------------------------------------------------------------------------------
 	  // WindowImpl
@@ -293,16 +387,25 @@ namespace cinder {
     AppImplMsw::AppImplMsw(App* app)
       : AppImpl(app) 
 	  {
-        mMainWindow = std::make_unique<Window>(app);
+        auto window = std::make_unique<Window>(app);
+        mWindows.push_back(std::move(window));
 	  }
 
     AppImplMsw::~AppImplMsw() {
 	  }
 
     void AppImplMsw::run() {
+      mApp->private_setup();
+
       MSG msg = {};
-      while (true) {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+      while (! mShouldQuit) {
+        // Regulate frame rate
+        mApp->private_update();
+        if (! mShouldQuit ) {
+          mApp->private_redraw();
+        }
+
+        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
           if (msg.message == WM_QUIT) {
             break;
           }
@@ -310,35 +413,86 @@ namespace cinder {
           TranslateMessage(&msg);
           DispatchMessage(&msg);
         }
-        else {
-        }
       }
     }
 
-	  // ------------------------------------------------------------------------------------------------
+    void AppImplMsw::closeWindow(Window* window)
+    {
+      mWindows.erase(std::remove_if(std::begin(mWindows),
+                                    std::end(mWindows),
+                                    [&window](const auto& elem) -> bool {
+                                      return window == elem.get();
+                                    }),
+                     std::end(mWindows));
+      if (mWindows.empty()) {
+        mShouldQuit = true;
+      }
+    }
+
+    // ------------------------------------------------------------------------------------------------
 	  // WindowImplMsw
 	  // ------------------------------------------------------------------------------------------------
+    static std::unordered_map<HWND, Window*> sWndToWindow;
     static LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
     WindowImplMsw::WindowImplMsw(Window* window)
       : WindowImpl(window)
     {
+      const auto& appParmas = mWindow->getApp()->getAppParams();
+      const auto& classNameUtf8 = appParmas.name;
+
+      mWindowClassName.resize(classNameUtf8.size() + 1);
+      size_t convertedChars = 0;
+      mbstowcs_s(&convertedChars, mWindowClassName.data(), mWindowClassName.size(), classNameUtf8.c_str(), _TRUNCATE);
+
       WNDCLASSEX wc = {};
 	    wc.cbSize         = sizeof(WNDCLASSEX);
 	    wc.style          = CS_HREDRAW | CS_VREDRAW;
 	    wc.lpfnWndProc    = WndProc;
 	    wc.cbClsExtra     = NULL;
 	    wc.cbWndExtra     = NULL;
-	    wc.hInstance      = mWindow->getApp()->getAppParams().hInstance;
+	    wc.hInstance      = appParmas.hInstance;
 	    wc.hIcon          = LoadIcon(NULL, IDI_APPLICATION);
 	    wc.hCursor        = LoadCursor(NULL, IDC_ARROW);
 	    wc.hbrBackground  = (HBRUSH)(COLOR_WINDOW + 2);
 	    wc.lpszMenuName   = NULL;
-	    wc.lpszClassName  = L"MyTestWindow";
+	    wc.lpszClassName  = mWindowClassName.data();
 	    wc.hIconSm        = LoadIcon(NULL, IDI_APPLICATION);
+
+	    if (!RegisterClassEx(&wc)){
+		    MessageBox(NULL, L"Error registering window class", L"Error", MB_OK | MB_ICONERROR);
+        throw std::runtime_error("Error registering window class");
+	    }
+
+      DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+      RECT windowRect = {0, 0, 640, 480};
+      AdjustWindowRect(&windowRect, dwStyle, FALSE);
+      int windowWidth = windowRect.right - windowRect.left;
+      int windowHeight = windowRect.bottom - windowRect.top;
+
+	    mWnd = CreateWindowEx(NULL, mWindowClassName.data(), mWindowClassName.data(),
+		    dwStyle, CW_USEDEFAULT, CW_USEDEFAULT,
+		    windowWidth, windowHeight, NULL, NULL, appParmas.hInstance, NULL);
+
+	    if (! mWnd) {
+		    MessageBox(NULL, L"Error creating window", L"Error", MB_OK | MB_ICONERROR);
+		    throw std::runtime_error("Error creating window");
+	    }
+
+      sWndToWindow[mWnd] = mWindow;
+
+      ShowWindow(mWnd, appParmas.nCmdShow);
+      UpdateWindow(mWnd);
     }
 
     WindowImplMsw::~WindowImplMsw() {
+      const auto& appParmas = mWindow->getApp()->getAppParams();
+      UnregisterClass(mWindowClassName.data(), appParmas.hInstance);
+    }
+
+    void WindowImplMsw::redraw()
+    {
+	    ::RedrawWindow( mWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW );
     }
 
     void WindowImplMsw::setupRenderer() {
@@ -346,12 +500,31 @@ namespace cinder {
     }
 
     static LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+      Window* window = nullptr;
+      if (sWndToWindow.find(wnd) != sWndToWindow.end()) {
+        window = sWndToWindow[wnd];
+      }
+    
       switch (msg) {
+        case WM_CREATE: {
+          // NOTE: sWndWindow will not yet contain an entry for wnd since
+          //       this message will be sent before CreateWindowEx finishes.
+        } break;
+
         case WM_KEYDOWN: {
+          assert(window != nullptr);
         } break; 
+
+        case WM_PAINT: {
+          assert(window != nullptr);
+          window->private_draw();
+        } break; 
+
         
         case WM_DESTROY: {
           PostQuitMessage(0);
+          sWndToWindow.erase(wnd); 
+          window->close();
           return 0;
         } break;
       }
@@ -361,19 +534,24 @@ namespace cinder {
 } // namespace cinder
 #endif
 
+#endif // defined(TINYCI_IMPLEMENTATION)
+
 #if defined(CINDER_MSW)
-  #define CINDER_APP( APP, RENDERER, ... ) \
+  #define CINDER_APP( APP, RENDERER, ... )                                                               \
     int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow ) \
     {                                                                                                    \
-      cinder::app::detail::sAppParams.hInstance = hInstance;                                             \
-      cinder::app::detail::sAppParams.createRendererFn                                                   \
+      cinder::app::detail::AppParams appParams;                                                          \
+      appParams.name = #APP;                                                                             \
+      appParams.hInstance = hInstance;                                                                   \
+      appParams.nCmdShow = nCmdShow;                                                                     \
+      appParams.createRendererFn                                                                         \
 		    = [](cinder::app::Window* window) -> cinder::app::Renderer* {                                    \
 			      return new RENDERER(window); };                                                              \
+      cinder::app::App::configureApp(appParams, ##__VA_ARGS__);                                          \
 	    std::unique_ptr<ci::app::App> app = std::make_unique<APP>();                                       \
-      app->run();                                                                                        \
+      app->private_run();                                                                                \
       return 0;                                                                                          \
     }
 #elif defined(CINDER_LINUX)
 #endif
 
-#endif // defined(TINYCI_IMPLEMENTATION)
