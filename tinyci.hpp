@@ -157,28 +157,28 @@ namespace cinder {
 // Core classes
 // -------------------------------------------------------------------------------------------------
 namespace cinder {
-	//! \class Timer
-	//!
-	//!
+  //! \class Timer
+  //!
+  //!
   class Timer {
   public:
-	  //! Constructs a default timer which is initialized as stopped
-	  Timer();
-	  //! Constructs a default timer which is initialized as running unless \a startOnConstruction is false
-	  Timer( bool startOnConstruction );
-	  //! Begins timing. Optional \a offsetSeconds parameter allows a relative offset
-	  void	  start( double offsetSeconds = 0 );
-	  //! Returns the elapsed seconds if the timer is running, or the total time between calls to start() and stop() if it is stopped.
-	  double	getSeconds() const;
-	  //! Ends timing
-	  void	  stop();
-	  //! Resumes timing without resetting the timer.
-	  void	  resume() { start( getSeconds() ); }
-	  //! Returns whether the timer is currently running
-	  bool	  isStopped() const { return mIsStopped; }
+    //! Constructs a default timer which is initialized as stopped
+    Timer();
+    //! Constructs a default timer which is initialized as running unless \a startOnConstruction is false
+    Timer( bool startOnConstruction );
+    //! Begins timing. Optional \a offsetSeconds parameter allows a relative offset
+    void    start( double offsetSeconds = 0 );
+    //! Returns the elapsed seconds if the timer is running, or the total time between calls to start() and stop() if it is stopped.
+    double  getSeconds() const;
+    //! Ends timing
+    void    stop();
+    //! Resumes timing without resetting the timer.
+    void    resume() { start( getSeconds() ); }
+    //! Returns whether the timer is currently running
+    bool    isStopped() const { return mIsStopped; }
   private:
-	  bool	  mIsStopped = true;
-	  double	mStartTime, mEndTime, mInvNativeFreq;
+    bool    mIsStopped = true;
+    double  mStartTime, mEndTime, mInvNativeFreq;
   };
 
   namespace fs {
@@ -275,40 +275,40 @@ namespace cinder {
 
   namespace app {
     class App;
-	  class Window;
-	  class Renderer;
+    class Window;
+    class Renderer;
     using RendererRef = std::shared_ptr<Renderer>;
     using WindowRef = std::shared_ptr<Window>;
 
     namespace detail {
       using CreateRendererFn = std::function<cinder::app::Renderer*()>;
-	    struct AppParams {
+      struct AppParams {
         std::string       name;
 #if defined(CINDER_MSW)
-		    HINSTANCE			    hInstance = nullptr;
+        HINSTANCE         hInstance = nullptr;
         int               nCmdShow = 0;
 #endif
-		    CreateRendererFn  createRendererFn;
-	    };
-	  } // namespace detail
+        CreateRendererFn  createRendererFn;
+      };
+    } // namespace detail
 
-	  //! \class KeyEvent
-	  //!
-	  //!
+    //! \class KeyEvent
+    //!
+    //!
     class KeyEvent {
     };
 
-	  //! \class MouseEvent
-	  //!
-	  //!
+    //! \class MouseEvent
+    //!
+    //!
     class MouseEvent {
     };
 
-	  //! \class WindowImpl
-	  //!
-	  //!
-	  class WindowImpl {
-	  public:
+    //! \class WindowImpl
+    //!
+    //!
+    class WindowImpl {
+    public:
       WindowImpl(Window* window, int32_t width, int32_t height);
       virtual ~WindowImpl();
       RendererRef   getRenderer() const;
@@ -317,21 +317,21 @@ namespace cinder {
       virtual void  redraw() = 0;
     protected:
       virtual void  setupRenderer() = 0;
-	  protected:
-	    Window*			  mWindow;
-	    RendererRef	  mRenderer;
+    protected:
+      Window*       mWindow;
+      RendererRef   mRenderer;
       int32_t       mWidth = 0;
       int32_t       mHeight = 0;
     private:
       void createRenderer(detail::CreateRendererFn createRendererFn);      
       friend class Window;
-	  };
+    };
     
-	  //! \class Window
-	  //!
-	  //!
-	  class Window : public std::enable_shared_from_this<Window> {
-	  public:
+    //! \class Window
+    //!
+    //!
+    class Window : public std::enable_shared_from_this<Window> {
+    public:
       Window(App* app, int32_t width, int32_t height);
       virtual ~Window();
       App*          getApp() const {return mApp;}
@@ -340,13 +340,13 @@ namespace cinder {
       int32_t       getHeight() const { return mImpl->getHeight(); }
       virtual void  close();
       virtual void  redraw();
-	  private:
+    private:
       App*                        mApp = nullptr;
-	    std::unique_ptr<WindowImpl>	mImpl;
+      std::unique_ptr<WindowImpl> mImpl;
     public:
       //! Do not call this function direct, the behavior is undefined.
       void private_draw();
-	  };
+    };
 
     //! \class AppImpl
     //!
@@ -370,9 +370,9 @@ namespace cinder {
       virtual void  closeWindow(const WindowRef& window) = 0;
       friend class App;
     protected:
-      App*						        mApp = nullptr;
+      App*                    mApp = nullptr;
       bool                    mShouldQuit = false;
-	    std::vector<WindowRef>  mWindows;
+      std::vector<WindowRef>  mWindows;
       WindowRef               mCurrentWindow;
       uint64_t                mElapsedFrames = 0;
       Timer                   mTimer;
@@ -431,16 +431,16 @@ namespace cinder {
       // Client app functions
       virtual void  setup() {}
       virtual void  cleanup() {}
-      virtual void	mouseDown(MouseEvent event) {}
-      virtual void	mouseUp(MouseEvent event) {}
-      virtual void	mouseDrag(MouseEvent event) {}
-      virtual void	keyDown(KeyEvent event) {}
-      virtual void	update() {}
-      virtual void	draw() {}
+      virtual void  mouseDown(MouseEvent event) {}
+      virtual void  mouseUp(MouseEvent event) {}
+      virtual void  mouseDrag(MouseEvent event) {}
+      virtual void  keyDown(KeyEvent event) {}
+      virtual void  update() {}
+      virtual void  draw() {}
     private:
       std::unique_ptr<detail::AppParams>  mAppParams;
       std::unique_ptr<App::Settings>      mSettings;
-      std::unique_ptr<AppImpl>	          mImpl;
+      std::unique_ptr<AppImpl>            mImpl;
 
     private:
       void private_setup();
@@ -464,7 +464,7 @@ namespace cinder {
     //!
     //!
     class AppImplMsw : public AppImpl {
-	  public:
+    public:
       AppImplMsw(App* app);
       virtual ~AppImplMsw();
       virtual fs::path  getAppPath() const override;
@@ -473,47 +473,47 @@ namespace cinder {
       virtual void  closeWindow(const WindowRef& window) override;
     private:
       void          sleep( double seconds );
-	  private:
+    private:
       double  mNextFrameTime = 0;
     };
 
-	  //! \class WindowImplMsw
-	  //!
-	  //!
-	  class WindowImplMsw : public WindowImpl {	
-	  public:
+    //! \class WindowImplMsw
+    //!
+    //!
+    class WindowImplMsw : public WindowImpl { 
+    public:
         WindowImplMsw(Window* window, int32_t width, int32_t height);
         virtual ~WindowImplMsw();
         virtual void  redraw() override;
       protected:
         virtual void  setupRenderer() override;
-	  private:
+    private:
         HWND                  mWnd = nullptr;
         HDC                   mDc = nullptr;
         std::vector<wchar_t>  mWindowClassName;
-	  };
+    };
 #elif defined(CINDER_LINUX)
-	  //! \class App
-	  //!
-	  //!
+    //! \class App
+    //!
+    //!
     class AppImplLinux : public AppImpl {
     };
 
-	  //! \class App
-	  //!
-	  //!
-	  class WindowImplLinux : public WindowImpl {
-	  };
+    //! \class App
+    //!
+    //!
+    class WindowImplLinux : public WindowImpl {
+    };
 #endif
 
-	  //! \class Renderer
-	  //!
-	  //!
-	  class Renderer {
-	  public:
+    //! \class Renderer
+    //!
+    //!
+    class Renderer {
+    public:
       Renderer();
       virtual ~Renderer();
-      virtual RendererRef	clone() const = 0;
+      virtual RendererRef clone() const = 0;
 #if defined(CINDER_MSW)
       virtual void setup(HWND wnd, HDC dc, std::shared_ptr<Renderer> sharedRenderer) = 0;
       virtual HWND getHwnd() = 0;
@@ -522,40 +522,40 @@ namespace cinder {
       virtual void finishToggleFullScreen() = 0;
       virtual void kill() = 0;
       virtual Surface8u copyWindowSurface(const Area &area, int32_t windowHeightPixels) = 0;
-	  };
+    };
 
-	  //! \class RendererGl
-	  //!
-	  //!
+    //! \class RendererGl
+    //!
+    //!
     class RendererGl : public Renderer {
     public:
       RendererGl();
       virtual ~RendererGl();
 
-	    virtual RendererRef	clone() const override { 
-		    return RendererRef( new RendererGl( *this ) ); 
-	    }
+      virtual RendererRef clone() const override { 
+        return RendererRef( new RendererGl( *this ) ); 
+      }
 
       virtual void  setup(HWND wnd, HDC dc, std::shared_ptr<Renderer> sharedRenderer) override;
 
-	    virtual HWND getHwnd() override { 
-		    return 0; 
-	    }
+      virtual HWND getHwnd() override { 
+        return 0; 
+      }
 
 
-	    virtual void prepareToggleFullScreen() override {
-	    }
+      virtual void prepareToggleFullScreen() override {
+      }
 
-	    virtual void finishToggleFullScreen() override {
-	    }
+      virtual void finishToggleFullScreen() override {
+      }
 
-	    virtual void kill() override {
-	    }
+      virtual void kill() override {
+      }
 
-	    virtual Surface8u copyWindowSurface( const Area &area, int32_t windowHeightPixels ) override {
-		    Surface8u result;
-		    return result;
-	    }
+      virtual Surface8u copyWindowSurface( const Area &area, int32_t windowHeightPixels ) override {
+        Surface8u result;
+        return result;
+      }
     };
   } // namespace app
 } // namespace cinder
@@ -586,9 +586,9 @@ namespace ci = cinder;
 // Support classes
 // -------------------------------------------------------------------------------------------------
 namespace cinder {
-	// -----------------------------------------------------------------------------------------------
-	// Buffer
-	// -----------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
+  // Buffer
+  // -----------------------------------------------------------------------------------------------
   Buffer::Buffer() {}
   Buffer::Buffer(size_t n) { setSize(n); }
   Buffer::~Buffer() {}
@@ -597,9 +597,9 @@ namespace cinder {
   uint8_t* Buffer::getData() { return mData.data(); }
   const uint8_t* Buffer::getData() const { return mData.data(); }
 
-	// -----------------------------------------------------------------------------------------------
-	// DataSource
-	// -----------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
+  // DataSource
+  // -----------------------------------------------------------------------------------------------
   DataSource::DataSource() {}
   DataSource::DataSource(const BufferRef& buffer) : mBuffer(buffer) {}
   DataSource::DataSource(const fs::path& path) : mFilePath(true) {
@@ -610,9 +610,9 @@ namespace cinder {
   DataSource::~DataSource() {}
   BufferRef DataSource::getBuffer() const { return mBuffer; }
 
-	// -----------------------------------------------------------------------------------------------
-	// ImageSource
-	// -----------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
+  // ImageSource
+  // -----------------------------------------------------------------------------------------------
   ImageSource::ImageSource() {} 
   ImageSource::ImageSource(uint32_t width, uint32_t height, 
                            uint32_t channelCount, uint32_t rowBytes, 
@@ -627,9 +627,9 @@ namespace cinder {
   int32_t ImageSource::ImageSource::getRowBytes() const { return mRowBytes; }
   const BufferRef&  ImageSource::ImageSource::getBuffer() const { return mBuffer; }
 
-	// -----------------------------------------------------------------------------------------------
-	// SurfaceT
-	// -----------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
+  // SurfaceT
+  // -----------------------------------------------------------------------------------------------
   template <typename T>
   SurfaceT<T>::SurfaceT() {}
 
@@ -679,45 +679,45 @@ namespace cinder {
 namespace cinder {
   Timer::Timer() {
 #if defined( CINDER_COCOA ) || defined( CINDER_ANDROID ) || defined( CINDER_LINUX )
-	  mEndTime = mStartTime = -1;
+    mEndTime = mStartTime = -1;
 #elif defined( CINDER_MSW )
-	  ::LARGE_INTEGER nativeFreq;
-	  ::QueryPerformanceFrequency( &nativeFreq );
-	  mInvNativeFreq = 1.0 / nativeFreq.QuadPart;
-	  mStartTime = mEndTime = -1;
+    ::LARGE_INTEGER nativeFreq;
+    ::QueryPerformanceFrequency( &nativeFreq );
+    mInvNativeFreq = 1.0 / nativeFreq.QuadPart;
+    mStartTime = mEndTime = -1;
 #endif
   }
 
   Timer::Timer( bool startOnConstruction ) {
 #if defined( CINDER_COCOA ) || defined( CINDER_ANDROID ) || defined( CINDER_LINUX )
-		mEndTime = mStartTime = -1;
+    mEndTime = mStartTime = -1;
 #elif defined( CINDER_MSW )
-	  ::LARGE_INTEGER nativeFreq;
-	  ::QueryPerformanceFrequency( &nativeFreq );
-  	mInvNativeFreq = 1.0 / nativeFreq.QuadPart;
-  	mStartTime = mEndTime = -1;
+    ::LARGE_INTEGER nativeFreq;
+    ::QueryPerformanceFrequency( &nativeFreq );
+    mInvNativeFreq = 1.0 / nativeFreq.QuadPart;
+    mStartTime = mEndTime = -1;
 #endif
-	  if( startOnConstruction ) { start(); }
+    if( startOnConstruction ) { start(); }
   }
 
   void Timer::start(double offsetSeconds)
   {
 #if defined( CINDER_COCOA )
-	  mStartTime = ::CFAbsoluteTimeGetCurrent() - offsetSeconds;
+    mStartTime = ::CFAbsoluteTimeGetCurrent() - offsetSeconds;
 #elif defined( CINDER_MSW )
     ::LARGE_INTEGER rawTime;
     ::QueryPerformanceCounter( &rawTime );
     mStartTime = rawTime.QuadPart * mInvNativeFreq - offsetSeconds;
 #elif defined( CINDER_ANDROID ) || defined( CINDER_LINUX )
-	  mStartTime = LinuxGetElapsedSeconds();
+    mStartTime = LinuxGetElapsedSeconds();
 #endif
-  	mIsStopped = false;
+    mIsStopped = false;
   }
 
   double Timer::getSeconds() const
   {
-	  if( mIsStopped ) {
-		  return mEndTime - mStartTime;
+    if( mIsStopped ) {
+      return mEndTime - mStartTime;
     } else {
 #if defined( CINDER_COCOA )
       return ::CFAbsoluteTimeGetCurrent() - mStartTime;
@@ -728,11 +728,11 @@ namespace cinder {
 #elif defined( CINDER_ANDROID ) || defined( CINDER_LINUX )
       return LinuxGetElapsedSeconds() - mStartTime;
 #endif
-	  }
+    }
   }
 
   void Timer::stop() {
-	  if( ! mIsStopped ) {
+    if( ! mIsStopped ) {
 #if defined( CINDER_COCOA )
       mEndTime = ::CFAbsoluteTimeGetCurrent();
 #elif defined( CINDER_MSW )
@@ -743,7 +743,7 @@ namespace cinder {
       mEndTime = LinuxGetElapsedSeconds();
 #endif
       mIsStopped = true;
-	  }
+    }
   }
 
   namespace fs {
@@ -768,13 +768,13 @@ namespace cinder {
   namespace app {
     namespace detail {
       // Do not use these directly, used by App for temp values
-	    static std::unique_ptr<AppParams>     sAppParams;
+      static std::unique_ptr<AppParams>     sAppParams;
       static std::unique_ptr<App::Settings> sAppSettings;
-	  } // namespace detail
+    } // namespace detail
 
     // ---------------------------------------------------------------------------------------------
-	  // App::Settings
-	  // ---------------------------------------------------------------------------------------------
+    // App::Settings
+    // ---------------------------------------------------------------------------------------------
     int32_t App::Settings::getWindowWidth() const
     {
       return mWindowWidth;
@@ -798,14 +798,14 @@ namespace cinder {
       mFrameRate = std::max(0.00001f, value);
     }
 
-	  // ---------------------------------------------------------------------------------------------
-	  // App
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // App
+    // ---------------------------------------------------------------------------------------------
     App::App() {
       mAppParams = std::move(detail::sAppParams);
       mSettings = std::move(detail::sAppSettings);
 #if defined(CINDER_MSW)
-	    mImpl = std::make_unique<AppImplMsw>(this);
+      mImpl = std::make_unique<AppImplMsw>(this);
 #endif
       // Start with full path to executable
       fs::path dir = getAppPath();
@@ -817,10 +817,10 @@ namespace cinder {
           break;
         }
       }
-	  }
+    }
 
     App::~App() {
-	  }
+    }
 
     const detail::AppParams* App::getAppParams() const
     {
@@ -870,16 +870,16 @@ namespace cinder {
       }
     }
 
-	  // ---------------------------------------------------------------------------------------------
-	  // AppImpl
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // AppImpl
+    // ---------------------------------------------------------------------------------------------
     AppImpl::AppImpl(App* app)
-	  	: mApp(app)
-	  {
-	  }
-	  
-	  AppImpl::~AppImpl() {
-	  }
+      : mApp(app)
+    {
+    }
+    
+    AppImpl::~AppImpl() {
+    }
 
     double AppImpl::getElapsedSeconds() const
     {
@@ -929,22 +929,22 @@ namespace cinder {
       }
     }
 
-	  // ---------------------------------------------------------------------------------------------
-	  // Window
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // Window
+    // ---------------------------------------------------------------------------------------------
     Window::Window(App* app, int32_t width, int32_t height)
       : mApp(app)
     {
 #if defined(CINDER_MSW)
-	    mImpl = std::make_unique<WindowImplMsw>(this, width, height);
+      mImpl = std::make_unique<WindowImplMsw>(this, width, height);
 #endif
       auto createRendererFn = app->getAppParams()->createRendererFn;
       mImpl->createRenderer(createRendererFn);
       mImpl->setupRenderer();
-	  }
+    }
 
     Window::~Window() {
-	  }
+    }
 
     RendererRef Window::getRenderer() const
     {
@@ -965,9 +965,9 @@ namespace cinder {
       mApp->private_draw(shared_from_this());
     }
 
-	  // ---------------------------------------------------------------------------------------------
-	  // WindowImpl
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // WindowImpl
+    // ---------------------------------------------------------------------------------------------
     WindowImpl::WindowImpl(Window* window, int32_t width, int32_t height)
       : mWindow(window), mWidth(width), mHeight(height)
     {
@@ -985,16 +985,16 @@ namespace cinder {
       mRenderer = RendererRef(renderer);
     }
 
-	  // ---------------------------------------------------------------------------------------------
-	  // Renderer
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // Renderer
+    // ---------------------------------------------------------------------------------------------
     Renderer::Renderer() {}
 
     Renderer::~Renderer() {}
 
-	  // ------------------------------------------------------------------------------------------------
-	  // RendererGl
-	  // ------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------
+    // RendererGl
+    // ------------------------------------------------------------------------------------------------
     RendererGl::RendererGl() {}
 
     RendererGl::~RendererGl() {}
@@ -1008,21 +1008,21 @@ namespace cinder {
 #if defined(CINDER_MSW)
 namespace cinder {
   namespace app {
-	  // ---------------------------------------------------------------------------------------------
-	  // AppImplMsw
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // AppImplMsw
+    // ---------------------------------------------------------------------------------------------
     AppImplMsw::AppImplMsw(App* app)
       : AppImpl(app) 
-	  {              
+    {              
         int32_t width = mApp->getSettings()->getWindowWidth();
         int32_t height = mApp->getSettings()->getWindowHeight();
         auto window = std::make_shared<Window>(app, width, height);
         mWindows.push_back(window);
         setWindow(window);
-	  }
+    }
 
     AppImplMsw::~AppImplMsw() {
-	  }
+    }
 
     fs::path AppImplMsw::getAppPath() const {
       HMODULE module = GetModuleHandle(NULL);
@@ -1116,9 +1116,9 @@ namespace cinder {
       }
     }
 
-	  // ---------------------------------------------------------------------------------------------
-	  // WindowImplMsw
-	  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+    // WindowImplMsw
+    // ---------------------------------------------------------------------------------------------
     static std::unordered_map<HWND, Window*> sWndToWindow;
     static LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -1133,23 +1133,23 @@ namespace cinder {
       mbstowcs_s(&convertedChars, mWindowClassName.data(), mWindowClassName.size(), classNameUtf8.c_str(), _TRUNCATE);
 
       WNDCLASSEX wc = {};
-	    wc.cbSize         = sizeof(WNDCLASSEX);
-	    wc.style          = CS_HREDRAW | CS_VREDRAW;
-	    wc.lpfnWndProc    = WndProc;
-	    wc.cbClsExtra     = NULL;
-	    wc.cbWndExtra     = NULL;
-	    wc.hInstance      = appParmas->hInstance;
-	    wc.hIcon          = LoadIcon(NULL, IDI_APPLICATION);
-	    wc.hCursor        = LoadCursor(NULL, IDC_ARROW);
-	    wc.hbrBackground  = (HBRUSH)(COLOR_WINDOW + 2);
-	    wc.lpszMenuName   = NULL;
-	    wc.lpszClassName  = mWindowClassName.data();
-	    wc.hIconSm        = LoadIcon(NULL, IDI_APPLICATION);
+      wc.cbSize         = sizeof(WNDCLASSEX);
+      wc.style          = CS_HREDRAW | CS_VREDRAW;
+      wc.lpfnWndProc    = WndProc;
+      wc.cbClsExtra     = NULL;
+      wc.cbWndExtra     = NULL;
+      wc.hInstance      = appParmas->hInstance;
+      wc.hIcon          = LoadIcon(NULL, IDI_APPLICATION);
+      wc.hCursor        = LoadCursor(NULL, IDC_ARROW);
+      wc.hbrBackground  = (HBRUSH)(COLOR_WINDOW + 2);
+      wc.lpszMenuName   = NULL;
+      wc.lpszClassName  = mWindowClassName.data();
+      wc.hIconSm        = LoadIcon(NULL, IDI_APPLICATION);
 
-	    if (!RegisterClassEx(&wc)){
-		    MessageBox(NULL, L"Error registering window class", L"Error", MB_OK | MB_ICONERROR);
+      if (!RegisterClassEx(&wc)){
+        MessageBox(NULL, L"Error registering window class", L"Error", MB_OK | MB_ICONERROR);
         throw std::runtime_error("Error registering window class");
-	    }
+      }
 
       DWORD dwStyle = WS_OVERLAPPEDWINDOW;
       LONG clientWidth = static_cast<LONG>(getWidth());
@@ -1159,14 +1159,14 @@ namespace cinder {
       int windowWidth = windowRect.right - windowRect.left;
       int windowHeight = windowRect.bottom - windowRect.top;
 
-	    mWnd = CreateWindowEx(NULL, mWindowClassName.data(), mWindowClassName.data(),
-		    dwStyle, CW_USEDEFAULT, CW_USEDEFAULT,
-		    clientWidth, windowHeight, NULL, NULL, appParmas->hInstance, NULL);
+      mWnd = CreateWindowEx(NULL, mWindowClassName.data(), mWindowClassName.data(),
+        dwStyle, CW_USEDEFAULT, CW_USEDEFAULT,
+        clientWidth, windowHeight, NULL, NULL, appParmas->hInstance, NULL);
 
-	    if (! mWnd) {
-		    MessageBox(NULL, L"Error creating window", L"Error", MB_OK | MB_ICONERROR);
-		    throw std::runtime_error("Error creating window");
-	    }
+      if (! mWnd) {
+        MessageBox(NULL, L"Error creating window", L"Error", MB_OK | MB_ICONERROR);
+        throw std::runtime_error("Error creating window");
+      }
 
       mDc = GetDC(mWnd);
       sWndToWindow[mWnd] = mWindow;
@@ -1184,7 +1184,7 @@ namespace cinder {
 
     void WindowImplMsw::redraw()
     {
-	    ::RedrawWindow( mWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW );
+      ::RedrawWindow( mWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW );
     }
 
     void WindowImplMsw::setupRenderer() {
@@ -1296,7 +1296,7 @@ namespace cinder {
       appParams->createRendererFn = []() -> cinder::app::Renderer* { return new RENDERER(); };           \
       auto settings = new App::Settings();                                                               \
       cinder::app::App::configureApp(appParams, settings, ##__VA_ARGS__);                                \
-	    std::unique_ptr<ci::app::App> app = std::make_unique<APP>();                                       \
+      std::unique_ptr<ci::app::App> app = std::make_unique<APP>();                                       \
       app->private_run();                                                                                \
       return 0;                                                                                          \
     }
