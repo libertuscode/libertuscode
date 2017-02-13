@@ -543,7 +543,7 @@ void lc_image_resize_uint8(int src_width, int src_height, int src_row_stride, co
 
         default: break;
     }
-    assert(NULL != filter);
+    assert(NULL != filter_fn);
 
     if (NULL != p_filter_args) {
         memcpy(&filter_args, p_filter_args, sizeof(*p_filter_args));
@@ -834,7 +834,7 @@ void lc_image_resize_float(int src_width, int src_height, int src_row_stride, co
 
         default: break;
     }
-    assert(NULL != filter);
+    assert(NULL != filter_fn);
 
     if (NULL != p_filter_args) {
         memcpy(&filter_args, p_filter_args, sizeof(*p_filter_args));

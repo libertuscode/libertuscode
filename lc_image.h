@@ -108,6 +108,14 @@ void lc_free_image(unsigned char* data);
 #if defined(LC_IMAGE_IMPLEMENTATION)
 
 #if defined(_WIN32)
+    #pragma warning(push)
+    #pragma warning(disable: 4996) 
+#elif defined(__clang__)
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunused-function"
+#endif
+
+#if defined(_WIN32)
     /* Pull in minimal Windows headers */
     #if ! defined(NOMINMAX)
         #define NOMINMAX
@@ -116,10 +124,7 @@ void lc_free_image(unsigned char* data);
         #define WIN32_LEAN_AND_MEAN
     #endif
     #include <Windows.h>
-
-    #pragma warning(push)
-    #pragma warning(disable: 4996) 
-#elif defined(_POSIX_VERSION)
+#elif defined(__linux__)
     #include <sys/stat.h>
 #endif
 
@@ -178,13 +183,13 @@ unsigned char* lc_load_image(const char* file_name,
         CloseHandle(file_handle);
         file_size = (lc_uint64_t)size.QuadPart;
     }
-#elif defined(_POSIX_VERSION)
+#elif defined(__linux__)
     {
         struct stat st;
         if (-1 == stat(file_name, &st)) {
             return NULL;
         }
-        file_size = ((lc_uint64_t)st.st_size;
+        file_size = (lc_uint64_t)st.st_size;
     }
 #else
     {
@@ -432,7 +437,7 @@ static int njGetImageSize(void);
  allocated at run-time by NanoJPEG. It is still possible to decode another
  image after a njDone() call.
 */
-void njDone(void);
+static void njDone(void);
 
 /* lc_load_image_jpg */
 static lc_data_t* lc_load_image_jpg(lc_uint64_t size, const lc_data_t* data,
@@ -843,7 +848,9 @@ NJ_INLINE void njDecodeDHT(void) {
             remain -= currcnt << (16 - codelen);
             if (remain < 0) njThrow(NJ_SYNTAX_ERROR);
             for (i = 0;  i < currcnt;  ++i) {
-                register unsigned char code = nj.pos[i];
+                // NOTE: Clang warns that register is deprecated
+                //register unsigned char code = nj.pos[i];
+                unsigned char code = nj.pos[i];
                 for (j = spread;  j;  --j) {
                     vlc->bits = (unsigned char) codelen;
                     vlc->code = code;
@@ -1085,9 +1092,13 @@ NJ_INLINE void njConvert(void) {
         const unsigned char *pcr = nj.comp[2].pixels;
         for (yy = nj.height;  yy;  --yy) {
             for (x = 0;  x < nj.width;  ++x) {
-                register int y = py[x] << 8;
-                register int cb = pcb[x] - 128;
-                register int cr = pcr[x] - 128;
+                // NOTE: Clang warns that register is deprecated
+                //register int y = py[x] << 8;
+                //register int cb = pcb[x] - 128;
+                //register int cr = pcr[x] - 128;
+                int y = py[x] << 8;
+                int cb = pcb[x] - 128;
+                int cr = pcr[x] - 128;
                 *prgb++ = njClip((y            + 359 * cr + 128) >> 8);
                 *prgb++ = njClip((y -  88 * cb - 183 * cr + 128) >> 8);
                 *prgb++ = njClip((y + 454 * cb            + 128) >> 8);
@@ -4026,5 +4037,7 @@ static unsigned lodepng_decode24(unsigned char** out, unsigned* w, unsigned* h, 
 
 #if defined(_WIN32)
     #pragma warning(pop)
-#endif 
+#elif defined(__clang__)
+    #pragma clang diagnostic pop
+#endif
 #endif /* defined(LC_IMAGE_IMPLEMENTATION) */
