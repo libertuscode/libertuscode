@@ -29,6 +29,9 @@ POSSIBILITY OF SUCH DAMAGE.
   #if ! defined(WIN32_LEAN_AND_MEAN)
     #define WIN32_LEAN_AND_MEAN
   #endif
+  #if ! defined(NOMINMAX)
+    #define NOMINMAX
+  #endif
   #include <Windows.h>
   #include <comutil.h>
   #pragma comment(lib, "comsuppw.lib")
@@ -573,6 +576,7 @@ namespace ci = cinder;
 // IMPLEMENTATION
 // =================================================================================================
 #if defined(TINYCI_IMPLEMENTATION)
+#include <algorithm>
 #include <fstream>
 #include <unordered_map>
 #include <sys/types.h>
