@@ -40,6 +40,8 @@ Large portions of lc_mini_math is borrowed from GLM:
 #endif 
 
 #include <cmath>
+#include <cstddef>
+#include <limits>
 
 #define LC_DEPTH_ZERO_TO_ONE            0x00000001
 #define LC_DEPTH_NEGATIVE_ONE_TO_ONE    0x00000002
@@ -48,7 +50,7 @@ Large portions of lc_mini_math is borrowed from GLM:
     #define LC_DEPTH_CLIP_SPACE         LC_DEPTH_ZERO_TO_ONE
 #endif
 
-#if ! defined( MINIMATH_NAMESPACE )
+#if ! defined( LC_MINIMATH_NAMESPACE )
     #define LC_MINIMATH_NAMESPACE lc
 #endif 
 
@@ -109,8 +111,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename U>
         tvec2<T>&   operator=(const tvec4<U>& v);
 
-        T&          operator[](size_t i);
-        const T&    operator[](size_t i) const;
+        T&          operator[](std::size_t i);
+        const T&    operator[](std::size_t i) const;
 
         tvec2<T>&   operator+=(const tvec2<T>& v);
         tvec2<T>&   operator-=(const tvec2<T>& v);
@@ -183,8 +185,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename U>
         tvec3<T>&   operator=(const tvec4<U>& m);
 
-        T&          operator[](size_t i);
-        const T&    operator[](size_t i) const;
+        T&          operator[](std::size_t i);
+        const T&    operator[](std::size_t i) const;
 
         tvec3<T>&   operator+=(const tvec3<T>& m);
         tvec3<T>&   operator-=(const tvec3<T>& m);
@@ -285,8 +287,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename U>
         tvec4<T>&   operator=(const tvec4<U>& v);
 
-        T&          operator[](size_t i);
-        const T&    operator[](size_t i) const;
+        T&          operator[](std::size_t i);
+        const T&    operator[](std::size_t i) const;
 
         tvec4<T>&   operator+=(const tvec4<T>& v);
         tvec4<T>&   operator-=(const tvec4<T>& v);
@@ -337,8 +339,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename U>
         tmat2x2<T>& operator=(const tmat2x2<U>& m);
 
-        col_type&           operator[](size_t i);
-        const col_type&     operator[](size_t i) const;
+        col_type&           operator[](std::size_t i);
+        const col_type&     operator[](std::size_t i) const;
 
         tmat2x2<T>& operator+=(const tmat2x2<T>& v);
         tmat2x2<T>& operator-=(const tmat2x2<T>& v);
@@ -350,8 +352,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename S>   tmat2x2<T>&   operator*=(const S& s);
         template <typename S>   tmat2x2<T>&   operator/=(const S& s);
 
-        tmat2x2<T> _inverse(); 
-        tmat2x2<T> _tranpose();
+        tmat2x2<T> _inverse() const;
+        tmat2x2<T> _transpose() const;
     };
 
     //! \struct tmat3x3
@@ -396,8 +398,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename U>
         tmat3x3<T>& operator=(const tmat3x3<U>& m);
 
-        col_type&           operator[](size_t i);
-        const col_type&     operator[](size_t i) const;
+        col_type&           operator[](std::size_t i);
+        const col_type&     operator[](std::size_t i) const;
 
         tmat3x3<T>& operator+=(const tmat3x3<T>& m);
         tmat3x3<T>& operator-=(const tmat3x3<T>& m);
@@ -409,8 +411,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename S>   tmat3x3<T>&   operator*=(const S& s);
         template <typename S>   tmat3x3<T>&   operator/=(const S& s);
 
-        tmat3x3<T> _inverse(); 
-        tmat3x3<T> _tranpose();
+        tmat3x3<T> _inverse() const;
+        tmat3x3<T> _transpose() const;
     };
 
     //! \struct tmat4x4
@@ -458,8 +460,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename U>
         tmat4x4<T>& operator=(const tmat4x4<U>& m);
 
-        col_type&           operator[](size_t i);
-        const col_type&     operator[](size_t i) const;
+        col_type&           operator[](std::size_t i);
+        const col_type&     operator[](std::size_t i) const;
 
         tmat4x4<T>& operator+=(const tmat4x4<T>& m);
         tmat4x4<T>& operator-=(const tmat4x4<T>& m);
@@ -471,8 +473,8 @@ namespace LC_MINIMATH_NAMESPACE {
         template <typename S>   tmat4x4<T>&   operator*=(const S& s);
         template <typename S>   tmat4x4<T>&   operator/=(const S& s);
 
-        tmat4x4<T> _inverse(); 
-        tmat4x4<T> _tranpose();
+        tmat4x4<T> _inverse() const;
+        tmat4x4<T> _transpose() const;
     };
 
     template <typename T> struct tquat {
@@ -515,6 +517,26 @@ namespace LC_MINIMATH_NAMESPACE {
     };
     */
 
+    // Operator: v*v
+    template <typename T> tvec2<T> operator*(const tvec2<T>& v1, const tvec2<T>& v2);
+    template <typename T> tvec3<T> operator*(const tvec3<T>& v1, const tvec3<T>& v2);
+    template <typename T> tvec4<T> operator*(const tvec4<T>& v1, const tvec4<T>& v2);
+
+    // Operator: v/v
+    template <typename T> tvec2<T> operator/(const tvec2<T>& v1, const tvec2<T>& v2);
+    template <typename T> tvec3<T> operator/(const tvec3<T>& v1, const tvec3<T>& v2);
+    template <typename T> tvec4<T> operator/(const tvec4<T>& v1, const tvec4<T>& v2);
+
+    // Operator: v+v
+    template <typename T> tvec2<T> operator+(const tvec2<T>& v1, const tvec2<T>& v2);
+    template <typename T> tvec3<T> operator+(const tvec3<T>& v1, const tvec3<T>& v2);
+    template <typename T> tvec4<T> operator+(const tvec4<T>& v1, const tvec4<T>& v2);
+
+    // Operator: v-v
+    template <typename T> tvec2<T> operator-(const tvec2<T>& v1, const tvec2<T>& v2);
+    template <typename T> tvec3<T> operator-(const tvec3<T>& v1, const tvec3<T>& v2);
+    template <typename T> tvec4<T> operator-(const tvec4<T>& v1, const tvec4<T>& v2);
+
     // Operator: v*s, s*v
     template <typename T, typename S> tvec2<T> operator*(const tvec2<T>& v, const S& s);
     template <typename T, typename S> tvec2<T> operator*(const S& s, const tvec2<T>& v);
@@ -538,6 +560,11 @@ namespace LC_MINIMATH_NAMESPACE {
     template <typename T> tmat3x3<T> operator*(const tvec3<T>& v, const tmat3x3<T>& m);
     template <typename T> tmat4x4<T> operator*(const tmat4x4<T>& m, const tvec4<T>& v);
     template <typename T> tmat4x4<T> operator*(const tvec4<T>& v, const tmat4x4<T>& m);
+
+    // Operator: m*m
+    template <typename T> tmat2x2<T> operator*(const tmat2x2<T>& m1, const tmat2x2<T>& m2);
+    template <typename T> tmat3x3<T> operator*(const tmat3x3<T>& m1, const tmat3x3<T>& m2);
+    template <typename T> tmat4x4<T> operator*(const tmat4x4<T>& m1, const tmat4x4<T>& m2);
 
     // Dot
     template <typename T> T dot(const tvec2<T>& v1, const tvec2<T>& v2);
@@ -680,13 +707,13 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    T& tvec2<T>::operator[](size_t i) {
-        return &x[i];
+    T& tvec2<T>::operator[](std::size_t i) {
+        return (&x)[i];
     }
 
     template <typename T>
-    const T& tvec2<T>::operator[](size_t i) const {
-        return &x[i];
+    const T& tvec2<T>::operator[](std::size_t i) const {
+        return (&x)[i];
     }
 
     template <typename T>
@@ -869,13 +896,13 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    T& tvec3<T>::operator[](size_t i) {
-        return &x[i];
+    T& tvec3<T>::operator[](std::size_t i) {
+        return (&x)[i];
     }
 
     template <typename T>
-    const T& tvec3<T>::operator[](size_t i) const {
-        return &x[i];
+    const T& tvec3<T>::operator[](std::size_t i) const {
+        return (&x)[i];
     }
 
     template <typename T>
@@ -1137,13 +1164,13 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    T& tvec4<T>::operator[](size_t i) {
-        return &x[i];
+    T& tvec4<T>::operator[](std::size_t i) {
+        return (&x)[i];
     }
 
     template <typename T>
-    const T& tvec4<T>::operator[](size_t i) const {
-        return &x[i];
+    const T& tvec4<T>::operator[](std::size_t i) const {
+        return (&x)[i];
     }
 
     template <typename T>
@@ -1297,12 +1324,12 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    typename tmat2x2<T>::col_type& tmat2x2<T>::operator[](size_t i) {
+    typename tmat2x2<T>::col_type& tmat2x2<T>::operator[](std::size_t i) {
         return this->value[i];
     }
 
     template <typename T>
-    const typename tmat2x2<T>::col_type& tmat2x2<T>::operator[](size_t i) const {
+    const typename tmat2x2<T>::col_type& tmat2x2<T>::operator[](std::size_t i) const {
         return this->value[i];
     }
 
@@ -1367,8 +1394,8 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    tmat2x2<T> tmat2x2<T>::_inverse() {
-        auto& m = this->value;
+    tmat2x2<T> tmat2x2<T>::_inverse() const {
+        const auto& m = this->value;
 
 		T OneOverDeterminant = static_cast<T>(1) / (
 			+ m[0][0] * m[1][1]
@@ -1384,9 +1411,9 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    tmat2x2<T> tmat2x2<T>::_tranpose() {
+    tmat2x2<T> tmat2x2<T>::_transpose() const {
 		tmat2x2 Transpose(detail::uninitialize);
-        auto& m = this->value;
+        const auto& m = this->value;
 
 		Transpose[0][0] = m[0][0];
 		Transpose[0][1] = m[1][0];
@@ -1483,12 +1510,12 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    typename tmat3x3<T>::col_type& tmat3x3<T>::operator[](size_t i) {
+    typename tmat3x3<T>::col_type& tmat3x3<T>::operator[](std::size_t i) {
         return this->value[i];
     }
 
     template <typename T>
-    const typename tmat3x3<T>::col_type& tmat3x3<T>::operator[](size_t i) const {
+    const typename tmat3x3<T>::col_type& tmat3x3<T>::operator[](std::size_t i) const {
         return this->value[i];
     }
 
@@ -1561,7 +1588,7 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    tmat3x3<T> tmat3x3<T>::_inverse() {
+    tmat3x3<T> tmat3x3<T>::_inverse() const {
         auto& m = this->value;
 
 		T OneOverDeterminant = static_cast<T>(1) / (
@@ -1584,9 +1611,9 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    tmat3x3<T> tmat3x3<T>::_tranpose() {
+    tmat3x3<T> tmat3x3<T>::_transpose() const {
 		tmat3x3 Transpose(detail::uninitialize);
-        auto& m = this->value;
+        const auto& m = this->value;
 
 		Transpose[0][0] = m[0][0];
 		Transpose[0][1] = m[1][0];
@@ -1701,12 +1728,12 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    typename tmat4x4<T>::col_type& tmat4x4<T>::operator[](size_t i) {
+    typename tmat4x4<T>::col_type& tmat4x4<T>::operator[](std::size_t i) {
         return this->value[i];
     }
 
     template <typename T>
-    const typename tmat4x4<T>::col_type& tmat4x4<T>::operator[](size_t i) const {
+    const typename tmat4x4<T>::col_type& tmat4x4<T>::operator[](std::size_t i) const {
         return this->value[i];
     }
 
@@ -1730,10 +1757,14 @@ namespace LC_MINIMATH_NAMESPACE {
 
     template <typename T>
     tmat4x4<T>& tmat4x4<T>::operator*=(const tmat4x4<T>& m) {
-        this->value[0] *= m.value[0];
-        this->value[1] *= m.value[1];
-        this->value[2] *= m.value[2];
-        this->value[3] *= m.value[3];
+      const auto v0 = this->value[0];
+      const auto v1 = this->value[1];
+      const auto v2 = this->value[2];
+      const auto v3 = this->value[3];
+      this->value[0] = v0 * m.value[0][0] + v1 * m.value[0][1] + v2 * m.value[0][2] + v3 * m.value[0][3];
+      this->value[1] = v0 * m.value[1][0] + v1 * m.value[1][1] + v2 * m.value[1][2] + v3 * m.value[1][3];
+      this->value[2] = v0 * m.value[2][0] + v1 * m.value[2][1] + v2 * m.value[2][2] + v3 * m.value[2][3];
+      this->value[3] = v0 * m.value[3][0] + v1 * m.value[3][1] + v2 * m.value[3][2] + v3 * m.value[3][3];
         return *this;
     }
 
@@ -1787,7 +1818,7 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    tmat4x4<T> tmat4x4<T>::_inverse() {
+    tmat4x4<T> tmat4x4<T>::_inverse() const {
         auto& m = this->value;
 
 		T Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
@@ -1846,7 +1877,7 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
-    tmat4x4<T> tmat4x4<T>::_tranpose() {
+    tmat4x4<T> tmat4x4<T>::_transpose() const {
 		tmat4x4 Transpose(detail::uninitialize);
         auto& m = this->value;
 
@@ -1871,6 +1902,90 @@ namespace LC_MINIMATH_NAMESPACE {
 		Transpose[3][3] = m[3][3];
 
 		return Transpose;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Operator: v*v
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tvec2<T> operator*(const tvec2<T>& v1, const tvec2<T>& v2) {
+        tvec2<T> result = v1;
+        result *= v2;
+        return result;
+    }
+
+    template <typename T> tvec3<T> operator*(const tvec3<T>& v1, const tvec3<T>& v2) {
+        tvec3<T> result = v1;
+        result *= v2;
+        return result;
+    }
+
+    template <typename T> tvec4<T> operator*(const tvec4<T>& v1, const tvec4<T>& v2) {
+        tvec4<T> result = v1;
+        result *= v2;
+        return result;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Operator: v/v
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tvec2<T> operator/(const tvec2<T>& v1, const tvec2<T>& v2) {
+        tvec2<T> result = v1;
+        result /= v2;
+        return result;
+    }
+
+    template <typename T> tvec3<T> operator/(const tvec3<T>& v1, const tvec3<T>& v2) {
+        tvec3<T> result = v1;
+        result /= v2;
+        return result;
+    }
+
+    template <typename T> tvec4<T> operator/(const tvec4<T>& v1, const tvec4<T>& v2) {
+        tvec4<T> result = v1;
+        result /= v2;
+        return result;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Operator: v+v
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tvec2<T> operator+(const tvec2<T>& v1, const tvec2<T>& v2) {
+        tvec2<T> result = v1;
+        result += v2;
+        return result;
+    }
+
+    template <typename T> tvec3<T> operator+(const tvec3<T>& v1, const tvec3<T>& v2) {
+        tvec3<T> result = v1;
+        result += v2;
+        return result;
+    }
+
+    template <typename T> tvec4<T> operator+(const tvec4<T>& v1, const tvec4<T>& v2) {
+        tvec4<T> result = v1;
+        result += v2;
+        return result;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Operator: v-v
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tvec2<T> operator-(const tvec2<T>& v1, const tvec2<T>& v2) {
+        tvec2<T> result = v1;
+        result -= v2;
+        return result;
+    }
+
+    template <typename T> tvec3<T> operator-(const tvec3<T>& v1, const tvec3<T>& v2) {
+        tvec3<T> result = v1;
+        result -= v2;
+        return result;
+    }
+
+    template <typename T> tvec4<T> operator-(const tvec4<T>& v1, const tvec4<T>& v2) {
+        tvec4<T> result = v1;
+        result -= v2;
+        return result;
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -1913,40 +2028,61 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     // ---------------------------------------------------------------------------------------------
+    // Operator: m*m
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tmat2x2<T> operator*(const tmat2x2<T>& m1, const tmat2x2<T>& m2) {
+      tmat2x2<T> result = m1;
+      result *= m2;
+      return result;
+    }
+
+    template <typename T> tmat3x3<T> operator*(const tmat3x3<T>& m1, const tmat3x3<T>& m2) {
+      tmat3x3<T> result = m1;
+      result *= m2;
+      return result;
+    }
+
+    template <typename T> tmat4x4<T> operator*(const tmat4x4<T>& m1, const tmat4x4<T>& m2) {
+      tmat4x4<T> result = m1;
+      result *= m2;
+      return result;
+    }
+
+    // ---------------------------------------------------------------------------------------------
     // Operator: m*s, s*m
     // ---------------------------------------------------------------------------------------------
     template <typename T, typename S> tmat2x2<T> operator*(const S& s, const tmat2x2<T>& m) {
-        tmat2x2<T> result = v;
+        tmat2x2<T> result = m;
         result *= s;
         return result;
     }
 
     template <typename T, typename S> tmat2x2<T> operator*(const tmat2x2<T>& m, const S& s) {
-        tmat2x2<T> result = v;
+        tmat2x2<T> result = m;
         result *= s;
         return result;
     }
 
     template <typename T, typename S> tmat3x3<T> operator*(const S& s, const tmat3x3<T>& m) {
-        tmat3x3<T> result = v;
+        tmat3x3<T> result = m;
         result *= s;
         return result;
     }
 
     template <typename T, typename S> tmat3x3<T> operator*(const tmat3x3<T>& m, const S& s) {
-        tmat3x3<T> result = v;
+        tmat3x3<T> result = m;
         result *= s;
         return result;
     }
 
     template <typename T, typename S> tmat4x4<T> operator*(const S& s, const tmat4x4<T>& m) {
-        tmat4x4<T> result = v;
+        tmat4x4<T> result = m;
         result *= s;
         return result;
     }
 
     template <typename T, typename S> tmat4x4<T> operator*(const tmat4x4<T>& m, const S& s) {
-        tmat4x4<T> result = v;
+        tmat4x4<T> result = m;
         result *= s;
         return result;
     }
@@ -1995,6 +2131,7 @@ namespace LC_MINIMATH_NAMESPACE {
 			m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w,
 			m[3][0] * v.x + m[3][1] * v.y + m[3][2] * v.z + m[3][3] * v.w);
     }
+
 
     // ---------------------------------------------------------------------------------------------
     // Dot
@@ -2118,15 +2255,15 @@ namespace LC_MINIMATH_NAMESPACE {
     // Transpose
     // ---------------------------------------------------------------------------------------------
     template <typename T> tmat2x2<T> transpose(const tmat2x2<T>& m) {
-        return m._tranpose();
+        return m._transpose();
     }
 
     template <typename T> tmat3x3<T> transpose(const tmat3x3<T>& m) {
-        return m._tranpose();
+        return m._transpose();
     }
 
     template <typename T> tmat4x4<T> transpose(const tmat4x4<T>& m) {
-        return m._tranpose();
+        return m._transpose();
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -2134,9 +2271,9 @@ namespace LC_MINIMATH_NAMESPACE {
     // ---------------------------------------------------------------------------------------------
     template <typename T> tmat4x4<T> translate(const tvec3<T>& v) {
 		tmat4x4<T> Result;
-		Result[0][0] = v[0];
-		Result[1][1] = v[1];
-		Result[2][2] = v[2];
+        Result[3][0] = v[0];
+        Result[3][1] = v[1];
+        Result[3][2] = v[2];
 		return Result;
     }
 
@@ -2152,25 +2289,28 @@ namespace LC_MINIMATH_NAMESPACE {
 		Rotate[0][0] = c + temp[0] * axis[0];
 		Rotate[0][1] = temp[0] * axis[1] + s * axis[2];
 		Rotate[0][2] = temp[0] * axis[2] - s * axis[1];
+        Rotate[0][3] = 0.0f;
 
 		Rotate[1][0] = temp[1] * axis[0] - s * axis[2];
 		Rotate[1][1] = c + temp[1] * axis[1];
 		Rotate[1][2] = temp[1] * axis[2] + s * axis[0];
+        Rotate[1][3] = 0.0f;
 
 		Rotate[2][0] = temp[2] * axis[0] + s * axis[1];
 		Rotate[2][1] = temp[2] * axis[1] - s * axis[0];
 		Rotate[2][2] = c + temp[2] * axis[2];
+        Rotate[2][3] = 0.0f;
 
-		tmat4x4<T> Result(detail::uninitialize);
-		Result[0] = m[0] * Rotate[0][0] + m[1] * Rotate[0][1] + m[2] * Rotate[0][2];
-		Result[1] = m[0] * Rotate[1][0] + m[1] * Rotate[1][1] + m[2] * Rotate[1][2];
-		Result[2] = m[0] * Rotate[2][0] + m[1] * Rotate[2][1] + m[2] * Rotate[2][2];
-		Result[3] = m[3];
-		return Result;
+        Rotate[3][0] = 0.0f;
+        Rotate[3][1] = 0.0f;
+        Rotate[3][2] = 0.0f;
+        Rotate[3][3] = 1.0f;
+
+        return Rotate;
     }
 
     template <typename T> tmat4x4<T> scale(const tvec3<T>& v) {
-		tmat4x4<T> Result(uninitialize);
+        tmat4x4<T> Result(detail::uninitialize);
 		Result[0][0] = v[0];
 		Result[1][1] = v[1];
 		Result[2][2] = v[2];
@@ -2190,7 +2330,7 @@ namespace LC_MINIMATH_NAMESPACE {
 		tvec3<T> const s(normalize(cross(up, f)));
 		tvec3<T> const u(cross(f, s));
 
-		tmat4x4<T> Result();
+        tmat4x4<T> Result{};
 		Result[0][0] = s.x;
 		Result[1][0] = s.y;
 		Result[2][0] = s.z;
@@ -2211,7 +2351,7 @@ namespace LC_MINIMATH_NAMESPACE {
 		tvec3<T> const s(normalize(cross(f, up)));
 		tvec3<T> const u(cross(s, f));
 
-		tmat4x4<T> Result();
+        tmat4x4<T> Result{};
 		Result[0][0] = s.x;
 		Result[1][0] = s.y;
 		Result[2][0] = s.z;
@@ -2286,7 +2426,7 @@ namespace LC_MINIMATH_NAMESPACE {
 		assert(fov > static_cast<T>(0));
 	
 		T const rad = fov;
-		T const h = glm::cos(static_cast<T>(0.5) * rad) / glm::sin(static_cast<T>(0.5) * rad);
+        T const h = std::cos(static_cast<T>(0.5) * rad) / std::sin(static_cast<T>(0.5) * rad);
 		T const w = h * height / width; ///todo max(width , Height) / min(width , Height)?
 
 		tmat4x4<T> Result(static_cast<T>(0));
@@ -2311,7 +2451,7 @@ namespace LC_MINIMATH_NAMESPACE {
 		assert(fov > static_cast<T>(0));
 	
 		T const rad = fov;
-		T const h = glm::cos(static_cast<T>(0.5) * rad) / glm::sin(static_cast<T>(0.5) * rad);
+        T const h = std::cos(static_cast<T>(0.5) * rad) / std::sin(static_cast<T>(0.5) * rad);
 		T const w = h * height / width; ///todo max(width , Height) / min(width , Height)?
 
 		tmat4x4<T> Result(static_cast<T>(0));
