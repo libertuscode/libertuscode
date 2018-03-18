@@ -606,6 +606,16 @@ namespace LC_MINIMATH_NAMESPACE {
     template <typename T> T distance2(const tvec3<T>& p0, const tvec3<T>& p1);
     template <typename T> T distance2(const tvec4<T>& p0, const tvec4<T>& p1);
 
+    // Min
+    template <typename T> tvec2<T> min(const tvec2<T>& p0, const tvec2<T>& p1);
+    template <typename T> tvec3<T> min(const tvec3<T>& p0, const tvec3<T>& p1);
+    template <typename T> tvec4<T> min(const tvec4<T>& p0, const tvec4<T>& p1);
+
+    // Max
+    template <typename T> tvec2<T> max(const tvec2<T>& p0, const tvec2<T>& p1);
+    template <typename T> tvec3<T> max(const tvec3<T>& p0, const tvec3<T>& p1);
+    template <typename T> tvec4<T> max(const tvec4<T>& p0, const tvec4<T>& p1);
+
     // Inverse
     template <typename T> tmat2x2<T> inverse(const tmat2x2<T>& m);
     template <typename T> tmat3x3<T> inverse(const tmat3x3<T>& m);
@@ -2265,6 +2275,48 @@ namespace LC_MINIMATH_NAMESPACE {
 
     template <typename T> T distance2(const tvec4<T>& p0, const tvec4<T>& p1) {
         return length2(p1 - p0);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Component-wise Min
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tvec2<T> min(const tvec2<T>& p0, const tvec2<T>& p1) {
+        return tvec2<T>(p0.x < p1.x ? p0.x : p1.x,
+                        p0.y < p1.y ? p0.y : p1.y);
+    }
+
+    template <typename T> tvec3<T> min(const tvec3<T>& p0, const tvec3<T>& p1) {
+        return tvec3<T>(p0.x < p1.x ? p0.x : p1.x,
+                        p0.y < p1.y ? p0.y : p1.y,
+                        p0.z < p1.z ? p0.z : p1.z);
+    }
+
+    template <typename T> tvec4<T> min(const tvec4<T>& p0, const tvec4<T>& p1) {
+        return tvec4<T>(p0.x < p1.x ? p0.x : p1.x,
+                        p0.y < p1.y ? p0.y : p1.y,
+                        p0.z < p1.z ? p0.z : p1.z,
+                        p0.w < p1.w ? p0.w : p1.w);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Component-wise Max
+    // ---------------------------------------------------------------------------------------------
+    template <typename T> tvec2<T> max(const tvec2<T>& p0, const tvec2<T>& p1) {
+        return tvec2<T>(p0.x > p1.x ? p0.x : p1.x,
+                        p0.y > p1.y ? p0.y : p1.y);
+    }
+
+    template <typename T> tvec3<T> max(const tvec3<T>& p0, const tvec3<T>& p1) {
+        return tvec3<T>(p0.x > p1.x ? p0.x : p1.x,
+                        p0.y > p1.y ? p0.y : p1.y,
+                        p0.z > p1.z ? p0.z : p1.z);
+    }
+
+    template <typename T> tvec4<T> max(const tvec4<T>& p0, const tvec4<T>& p1) {
+        return tvec4<T>(p0.x > p1.x ? p0.x : p1.x,
+                        p0.y > p1.y ? p0.y : p1.y,
+                        p0.z > p1.z ? p0.z : p1.z,
+                        p0.w > p1.w ? p0.w : p1.w);
     }
 
     // ---------------------------------------------------------------------------------------------
