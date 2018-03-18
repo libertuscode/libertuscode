@@ -39,6 +39,7 @@ Large portions of lc_mini_math is borrowed from GLM:
     #error "C++ is required!"
 #endif
 
+#include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <limits>
@@ -315,6 +316,8 @@ namespace LC_MINIMATH_NAMESPACE {
 
         tmat2x2();
 
+        explicit tmat2x2(const T& s);
+
         explicit tmat2x2(const T& x1, const T& y1,
                          const T& x2, const T& y2);
 
@@ -369,6 +372,8 @@ namespace LC_MINIMATH_NAMESPACE {
         tmat3x3(detail::ctor);
 
         tmat3x3();
+
+        explicit tmat3x3(const T& s);
 
         explicit tmat3x3(const T& x1, const T& y1, const T& z1,
                          const T& x2, const T& y2, const T& z2,
@@ -428,6 +433,8 @@ namespace LC_MINIMATH_NAMESPACE {
         tmat4x4(detail::ctor);
 
         tmat4x4();
+
+        explicit tmat4x4(const T& s);
 
         explicit tmat4x4(const T& x1, const T& y1, const T& z1, const T& w1,
                          const T& x2, const T& y2, const T& z2, const T& w2,
@@ -1263,6 +1270,13 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T>
+    tmat2x2<T>::tmat2x2(const T &s)
+    {
+      this->value[0] = col_type(s, 0);
+      this->value[1] = col_type(0, s);
+    }
+
+    template <typename T>
     tmat2x2<T>::tmat2x2(const T& x1, const T& y1,
                         const T& x2, const T& y2)
     {
@@ -1435,6 +1449,14 @@ namespace LC_MINIMATH_NAMESPACE {
         this->value[0] = col_type(1, 0, 0);
         this->value[1] = col_type(0, 1, 0);
         this->value[2] = col_type(0, 0, 1);
+    }
+
+    template <typename T>
+    tmat3x3<T>::tmat3x3(const T &s)
+    {
+        this->value[0] = col_type(s, 0, 0);
+        this->value[1] = col_type(0, s, 0);
+        this->value[2] = col_type(0, 0, s);
     }
 
     template <typename T>
@@ -1642,6 +1664,15 @@ namespace LC_MINIMATH_NAMESPACE {
         this->value[1] = col_type(0, 1, 0, 0);
         this->value[2] = col_type(0, 0, 1, 0);
         this->value[3] = col_type(0, 0, 0, 1);
+    }
+
+    template <typename T>
+    tmat4x4<T>::tmat4x4(const T &s)
+    {
+        this->value[0] = col_type(s, 0, 0, 0);
+        this->value[1] = col_type(0, s, 0, 0);
+        this->value[2] = col_type(0, 0, s, 0);
+        this->value[3] = col_type(0, 0, 0, s);
     }
 
     template <typename T>
@@ -2192,17 +2223,17 @@ namespace LC_MINIMATH_NAMESPACE {
     // Normalize
     // ---------------------------------------------------------------------------------------------
     template <typename T> tvec2<T> normalize(const tvec2<T>& v) {
-        T s = static_cast<T>(1) / dot(v, v);
+        T s = static_cast<T>(1) / length(v);
         return v * s;
     }
 
     template <typename T> tvec3<T> normalize(const tvec3<T>& v) {
-        T s = static_cast<T>(1) / dot(v, v);
+        T s = static_cast<T>(1) / length(v);
         return v * s;
     }
 
     template <typename T> tvec4<T> normalize(const tvec4<T>& v) {
-        T s = static_cast<T>(1) / dot(v, v);
+        T s = static_cast<T>(1) / length(v);
         return v * s;
     }
 
