@@ -561,12 +561,12 @@ namespace LC_MINIMATH_NAMESPACE {
     template <typename T, typename S> tmat4x4<T> operator*(const tmat4x4<T>& m, const S& s);
 
     // Operator: m*v, v*m
-    template <typename T> tmat2x2<T> operator*(const tmat2x2<T>& m, const tvec2<T>& v);
-    template <typename T> tmat2x2<T> operator*(const tvec2<T>& v, const tmat2x2<T>& m);
-    template <typename T> tmat3x3<T> operator*(const tmat3x3<T>& m, const tvec3<T>& v);
-    template <typename T> tmat3x3<T> operator*(const tvec3<T>& v, const tmat3x3<T>& m);
-    template <typename T> tmat4x4<T> operator*(const tmat4x4<T>& m, const tvec4<T>& v);
-    template <typename T> tmat4x4<T> operator*(const tvec4<T>& v, const tmat4x4<T>& m);
+    template <typename T> typename tmat2x2<T>::col_type operator*(const tmat2x2<T>& m, const tvec2<T>& v);
+    template <typename T> typename tmat2x2<T>::row_type operator*(const tvec2<T>& v, const tmat2x2<T>& m);
+    template <typename T> typename tmat3x3<T>::col_type operator*(const tmat3x3<T>& m, const tvec3<T>& v);
+    template <typename T> typename tmat3x3<T>::row_type operator*(const tvec3<T>& v, const tmat3x3<T>& m);
+    template <typename T> typename tmat4x4<T>::col_type operator*(const tmat4x4<T>& m, const tvec4<T>& v);
+    template <typename T> typename tmat4x4<T>::row_type operator*(const tvec4<T>& v, const tmat4x4<T>& m);
 
     // Operator: m*m
     template <typename T> tmat2x2<T> operator*(const tmat2x2<T>& m1, const tmat2x2<T>& m2);
@@ -2131,42 +2131,42 @@ namespace LC_MINIMATH_NAMESPACE {
     // ---------------------------------------------------------------------------------------------
     // Operator: m*v, v*m
     // ---------------------------------------------------------------------------------------------
-    template <typename T> tmat2x2<T> operator*(const tmat2x2<T>& m, const tvec2<T>& v) {
+    template <typename T> typename tmat2x2<T>::col_type operator*(const tmat2x2<T>& m, const tvec2<T>& v) {
         return typename tmat2x2<T>::col_type(
             m[0][0] * v.x + m[1][0] * v.y,
             m[0][1] * v.x + m[1][1] * v.y);
     }
 
-    template <typename T> tmat2x2<T> operator*(const tvec2<T>& v, const tmat2x2<T>& m) {
-        return typename tmat3x3<T>::row_type(
+    template <typename T> typename tmat2x2<T>::row_type operator*(const tvec2<T>& v, const tmat2x2<T>& m) {
+        return typename tmat2x2<T>::row_type(
             m[0][0] * v.x + m[0][1] * v.y,
             m[1][0] * v.x + m[1][1] * v.y);
     }
 
-    template <typename T> tmat3x3<T> operator*(const tmat3x3<T>& m, const tvec3<T>& v) {
+    template <typename T> typename tmat3x3<T>::col_type operator*(const tmat3x3<T>& m, const tvec3<T>& v) {
         return typename tmat3x3<T>::col_type(
             m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
             m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z,
             m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z);
     }
 
-    template <typename T> tmat3x3<T> operator*(const tvec3<T>& v, const tmat3x3<T>& m) {
+    template <typename T> typename tmat3x3<T>::row_type operator*(const tvec3<T>& v, const tmat3x3<T>& m) {
         return typename tmat3x3<T>::row_type(
             m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z,
             m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z,
             m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z);
     }
 
-    template <typename T> tmat4x4<T> operator*(const tmat4x4<T>& m, const tvec4<T>& v) {
-        return typename tmat3x3<T>::col_type(
+    template <typename T> typename tmat4x4<T>::col_type operator*(const tmat4x4<T>& m, const tvec4<T>& v) {
+        return typename tmat4x4<T>::col_type(
             m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0] * v.w,
             m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1] * v.w,
             m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2] * v.w,
             m[0][3] * v.x + m[1][3] * v.y + m[2][3] * v.z + m[3][3] * v.w);
     }
 
-    template <typename T> tmat4x4<T> operator*(const tvec4<T>& v, const tmat4x4<T>& m) {
-        return typename tmat3x3<T>::row_type(
+    template <typename T> typename tmat4x4<T>::row_type operator*(const tvec4<T>& v, const tmat4x4<T>& m) {
+        return typename tmat4x4<T>::row_type(
             m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3] * v.w,
             m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3] * v.w,
             m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3] * v.w,
