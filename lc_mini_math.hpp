@@ -2458,7 +2458,7 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T> tmat4x4<T> perspectiveLH(T fovy, T aspect, T zNear, T zFar) {
-        assert(abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
+        assert(std::abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
 
         T const tanHalfFovy = tan(fovy / static_cast<T>(2));
 
@@ -2479,7 +2479,7 @@ namespace LC_MINIMATH_NAMESPACE {
     }
 
     template <typename T> tmat4x4<T> perspectiveRH(T fovy, T aspect, T zNear, T zFar) {
-        assert(abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
+        assert(std::abs(aspect - std::numeric_limits<T>::epsilon()) > static_cast<T>(0));
 
         T const tanHalfFovy = tan(fovy / static_cast<T>(2));
 
