@@ -1373,8 +1373,10 @@ namespace LC_MINIMATH_NAMESPACE {
 
     template <typename T>
     tmat2x2<T>& tmat2x2<T>::operator*=(const tmat2x2<T>& m) {
-        this->value[0] *= m.value[0];
-        this->value[1] *= m.value[1];
+        const auto v0 = this->value[0];
+        const auto v1 = this->value[1];
+        this->value[0] = v0 * m.value[0][0] + v1 * m.value[0][1];
+        this->value[1] = v0 * m.value[1][0] + v1 * m.value[1][1];
         return *this;
     }
 
@@ -1569,9 +1571,12 @@ namespace LC_MINIMATH_NAMESPACE {
 
     template <typename T>
     tmat3x3<T>& tmat3x3<T>::operator*=(const tmat3x3<T>& m) {
-        this->value[0] *= m.value[0];
-        this->value[1] *= m.value[1];
-        this->value[2] *= m.value[2];
+        const auto v0 = this->value[0];
+        const auto v1 = this->value[1];
+        const auto v2 = this->value[2];
+        this->value[0] = v0 * m.value[0][0] + v1 * m.value[0][1] + v2 * m.value[0][2];
+        this->value[1] = v0 * m.value[1][0] + v1 * m.value[1][1] + v2 * m.value[1][2];
+        this->value[2] = v0 * m.value[2][0] + v1 * m.value[2][1] + v2 * m.value[2][2];
         return *this;
     }
 
